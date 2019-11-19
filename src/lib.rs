@@ -2,6 +2,7 @@ mod utils;
 
 use wasm_bindgen::prelude::*;
 use std::fmt;
+use js_sys::Math::random;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -59,20 +60,18 @@ impl Universe {
         self.cells = next;
     }
 
-    pub fn new() -> Universe {
-        let width = 64;
-        let height = 64;
+    pub fn new(width: u32, height: u32) -> Universe {
 
-        let cells = (0..width * height)
-            .map(|i| {
-                if i % 2 == 0 || i % 7 == 0 {
-                    Cell::Alive
-                } else {
-                    Cell::Dead
-                }
-            })
-            .collect();
-
+        // let cells = (0..width * height)
+        //     .map(|i| {
+        //         if i % 2 == 0 || i % 7 == 0 {
+        //             Cell::Alive
+        //         } else {
+        //             Cell::Dead
+        //         }
+        //     })
+        //     .collect();
+        let cells = Universe::randomize(width, height);
         Universe {
             width,
             height,
@@ -93,6 +92,39 @@ impl Universe {
 
     pub fn render(&self) -> String {
         self.to_string()
+    }
+
+    pub fn randomize(&self) {
+        self.cells = (0..self.width * self.height)
+            .map(|i| {
+                if random() > 0.5 {
+                    Cell::Alive
+                } else {
+                    Cell::Dead
+                }
+            }).collect();
+    }
+
+    pub fn create_random_universe(width:u32, height: u32) -> Vec<Cell> {
+        let random_universe = (0..width * height)
+            .map(|i| {
+                if random() > 0.5 {
+                    Cell::Alive
+                } else {
+                    Cell::Dead
+                }
+            }).collect();
+
+        random_universe
+    }
+
+    pub fn clear(&mut self) {
+        let empty_universe = (0..width * height)
+            .map(|i| {
+                Cell::Dead
+            }).collect();
+
+        self.cells = empty_universe;
     }
 
 }
